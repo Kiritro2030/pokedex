@@ -29,7 +29,13 @@ class PokemonCard extends StatelessWidget {
               width: double.infinity,
               height: 120,
               decoration: BoxDecoration(border: Border.all()),
-              child: Image.network(pokemon.imageUrl, height: 50, width: 50),
+              child: Image.network(
+                pokemon.imageUrl,
+                height: 50,
+                width: 50,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(Icons.catching_pokemon, size: 50),
+              ),
             ),
             Text(
               'Tipos: ${pokemon.types.join(', ')}',

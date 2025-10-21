@@ -30,9 +30,10 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pokedex"),
+        title: Text("Pokedex", style: TextStyle(fontSize: 15)),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
+        toolbarHeight: 40,
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

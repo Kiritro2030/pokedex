@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/pokemon_providers.dart';
-import 'package:pokedex/features/pokemon/presentation/widgets/pokemon_card.dart';
+import 'package:pokedex/features/pokemon/presentation/screens/pokemon_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class PokemonListScreen extends StatefulWidget {
@@ -33,7 +33,11 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.error,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   provider.errorMessage,
@@ -86,31 +90,47 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             itemCount: pokemons.length,
             itemBuilder: (context, index) {
               final pokemon = pokemons[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ListTile(
-                  leading: Image.network(
-                    pokemon.imageUrl,
-                    width: 56,
-                    height: 56,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.catching_pokemon, size: 56);
-                    },
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PokemonDetailScreen(pokemon: pokemon),
                   ),
-                  title: Text(
-                    pokemon.nombre.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                child: Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                  subtitle: Text(
-                    'Tipos: ${pokemon.types.join(', ')}',
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  trailing: Text(
-                    '#${pokemon.id}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                  child: ListTile(
+                    leading: Hero(
+                      tag: 'pokemon-image-${pokemon.id}',
+                      child: Image.network(
+                        pokemon.imageUrl,
+                        width: 56,
+                        height: 56,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.catching_pokemon, size: 56);
+                        },
+                      ),
+                    ),
+                    title: Text(
+                      pokemon.nombre.toUpperCase(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'Tipos: ${pokemon.types.join(', ')}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    trailing: Text(
+                      '#${pokemon.id}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                     ),
                   ),
                 ),

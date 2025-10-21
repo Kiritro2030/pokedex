@@ -3,6 +3,8 @@ import 'package:pokedex/core/error/failures.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 
 abstract class PokemonRepository {
+  Future<Either<Failure, Pokemon>> getPokemon({required String id});
+
   Future<Either<Failure, List<Pokemon>>> getPokemons({
     required int limit,
     int offset = 0,

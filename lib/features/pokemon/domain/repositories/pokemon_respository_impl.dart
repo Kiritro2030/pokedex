@@ -5,10 +5,25 @@ import 'package:pokedex/features/pokemon/data/datasources/pokemon_remote_data_so
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/features/pokemon/domain/repositories/pokemon_repository.dart';
 
-class PokemonRespositoryImpl extends PokemonRepository {
+class PokemonRepositoryImpl extends PokemonRepository {
   final PokemonRemoteDataSource remoteDataSource;
 
-  PokemonRespositoryImpl({required this.remoteDataSource});
+  PokemonRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<Either<Failure, Pokemon>> getPokemon({required String id}) async {
+    try {
+      final pokemon = await remoteDataSource.getPokemon(id: id);
+
+      return Right(pokemon.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on ConnectionException catch (e) {
+      return Left(ConnectionFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure("Error inesperado: ${e.toString()}"));
+    }
+  }
 
   @override
   Future<Either<Failure, List<Pokemon>>> getPokemons({
