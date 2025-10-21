@@ -18,7 +18,9 @@ class PokemonModel extends Pokemon {
       nombre: json["name"] as String,
       imageUrl:
           json['sprites']['other']['official-artwork']['front_default']
-              as String,
+              as String? ??
+          json['sprites']['front-default'] as String? ??
+          '',
       types: (json['types'] as List)
           .map((type) => type['type']['name'] as String)
           .toList(),
@@ -41,6 +43,7 @@ class PokemonModel extends Pokemon {
       'imageUrl': imageUrl,
       'types': types,
       'abilities': abilities,
+      'stats': stats,
     };
   }
 
@@ -50,8 +53,8 @@ class PokemonModel extends Pokemon {
       nombre: nombre,
       imageUrl: imageUrl,
       types: types,
-      stats: stats,
       abilities: abilities,
+      stats: stats,
     );
   }
 }
