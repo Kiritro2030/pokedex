@@ -35,7 +35,10 @@ class PokemonRemoteDataSourceImpl implements PokemonRemoteDataSource {
 
       final pokemonData = json.decode(pokemonResponse.body);
 
-      return PokemonModel.fromJson(pokemonData);
+      PokemonModel pokemon = PokemonModel.fromJson(pokemonData);
+
+      debugPrint(json.encode(pokemon.toJson()));
+      return pokemon;
     } on ServerException {
       // ✅ Si ya es ServerException, RE-LANZARLA sin modificar
       rethrow;

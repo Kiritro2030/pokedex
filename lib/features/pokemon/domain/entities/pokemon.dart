@@ -15,10 +15,10 @@ class Pokemon extends Equatable {
     required this.nombre,
     required this.imageUrl,
     required this.types,
-    required this.stats,
-    required this.abilities,
+    this.stats = const [],
+    this.abilities = const [],
   });
 
   @override
-  List<Object> get props => [id, nombre, imageUrl, types];
+  List<Object> get props => [id, nombre];
 }

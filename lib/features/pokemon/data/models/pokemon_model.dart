@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pokedex/features/pokemon/domain/entities/ability.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/features/pokemon/domain/entities/stat.dart';
@@ -19,7 +21,6 @@ class PokemonModel extends Pokemon {
       imageUrl:
           json['sprites']['other']['official-artwork']['front_default']
               as String? ??
-          json['sprites']['front-default'] as String? ??
           '',
       types: (json['types'] as List)
           .map((type) => type['type']['name'] as String)
@@ -40,10 +41,33 @@ class PokemonModel extends Pokemon {
     return {
       'id': id,
       'name': nombre,
-      'imageUrl': imageUrl,
-      'types': types,
-      'abilities': abilities,
-      'stats': stats,
+      "sprites": {
+        "other": {
+          "official-artwork": {"front_default": imageUrl},
+        },
+      },
+      'types': types
+          .map(
+            (type) => {
+              "type": {"name": type},
+            },
+          )
+          .toList(),
+      'abilities': abilities
+          .map(
+            (ability) => {
+              "ability": {"name": ability.nombre},
+            },
+          )
+          .toList(),
+      'stats': stats
+          .map(
+            (stat) => {
+              "stat": {"name": stat.nombre},
+              "base_stat": stat.valor,
+            },
+          )
+          .toList(),
     };
   }
 
