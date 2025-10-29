@@ -72,22 +72,12 @@ class PokemonRemoteDataSourceImpl implements PokemonRemoteDataSource {
 
       for (var pokemon in results) {
         final detailUrl = pokemon['url'] as String;
-        final detailResponse = await http.get(Uri.parse(detailUrl));
+        final name = pokemon['name'] as String;
 
-        if (detailResponse.statusCode == 200) {
-          final detailData = json.decode(detailResponse.body);
-          // debugPrint(jsonEncode(detailData['id']));
-          // debugPrint(jsonEncode(detailData['name']));
-          // debugPrint(
-          //   jsonEncode(
-          //     detailData['sprites']['other']['official-artwork']['front_default'],
-          //   ),
-          // );
-          debugPrint(jsonEncode(detailData['types']));
-          debugPrint(jsonEncode(detailData['stats']));
-          pokemons.add(PokemonModel.fromJson(detailData));
-        }
+        pokemons.add(PokemonModel.lite(name: name, url: detailUrl));
       }
+
+      debugPrint('✅ Cargados ${pokemons.length} Pokémon (offset: $offset)');
       return pokemons;
     } on ServerException {
       // ✅ Si ya es ServerException, RE-LANZARLA sin modificar

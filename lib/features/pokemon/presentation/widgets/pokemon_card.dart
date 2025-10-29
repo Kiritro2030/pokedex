@@ -16,7 +16,7 @@ class PokemonCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  pokemon.nombre.toUpperCase(),
+                  pokemon.name.toUpperCase(),
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(

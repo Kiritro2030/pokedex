@@ -56,7 +56,7 @@ class PokemonDetailScreen extends StatelessWidget {
                 const SizedBox(height: 5),
                 //Pokemon Name
                 Text(
-                  pokemon.nombre.toUpperCase(),
+                  pokemon.name.toUpperCase(),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
@@ -140,7 +140,7 @@ class PokemonDetailScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    ability.nombre.capitalizeFirst(),
+                                    ability.name.capitalizeFirst(),
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
@@ -187,7 +187,7 @@ class PokemonDetailScreen extends StatelessWidget {
                           SizedBox(
                             width: 70,
                             child: Text(
-                              stat.nombre.toUpperCase(),
+                              stat.name.toUpperCase(),
                               style: TextStyle(
                                 color: Theme.of(
                                   context,

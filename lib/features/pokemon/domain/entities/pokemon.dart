@@ -4,7 +4,7 @@ import 'package:pokedex/features/pokemon/domain/entities/stat.dart';
 
 class Pokemon extends Equatable {
   final int id;
-  final String nombre;
+  final String name;
   final String imageUrl;
   final List<String> types;
   final List<Stat> stats;
@@ -12,13 +12,13 @@ class Pokemon extends Equatable {
 
   const Pokemon({
     required this.id,
-    required this.nombre,
+    required this.name,
     required this.imageUrl,
-    required this.types,
+    this.types = const [],
     this.stats = const [],
     this.abilities = const [],
   });
 
   @override
-  List<Object> get props => [id, nombre];
+  List<Object> get props => [id, name];
 }

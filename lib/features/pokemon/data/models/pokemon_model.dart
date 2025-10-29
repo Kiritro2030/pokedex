@@ -7,17 +7,17 @@ import 'package:pokedex/features/pokemon/domain/entities/stat.dart';
 class PokemonModel extends Pokemon {
   const PokemonModel({
     required super.id,
-    required super.nombre,
+    required super.name,
     required super.imageUrl,
-    required super.types,
-    required super.stats,
-    required super.abilities,
+    super.types,
+    super.stats,
+    super.abilities,
   });
 
   factory PokemonModel.fromJson(Map<String, dynamic> json) {
     return PokemonModel(
       id: json['id'] as int,
-      nombre: json["name"] as String,
+      name: json["name"] as String,
       imageUrl:
           json['sprites']['other']['official-artwork']['front_default']
               as String? ??
@@ -28,19 +28,32 @@ class PokemonModel extends Pokemon {
       stats: (json['stats'] as List)
           .map(
             (stat) =>
-                Stat(nombre: stat['stat']['name'], valor: stat['base_stat']),
+                Stat(name: stat['stat']['name'], valor: stat['base_stat']),
           )
           .toList(),
       abilities: (json["abilities"] as List)
-          .map((ability) => Ability(nombre: ability["ability"]["name"]))
+          .map((ability) => Ability(name: ability["ability"]["name"]))
           .toList(),
+    );
+  }
+  factory PokemonModel.lite({required String name, required String url}) {
+    // Parsear ID desde la URL: "https://pokeapi.co/api/v2/pokemon/25/" → 25
+    final id = int.parse(
+      url.split("/").where((element) => element.isNotEmpty).last,
+    );
+
+    return PokemonModel(
+      id: id,
+      name: name,
+      imageUrl:
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': nombre,
+      'name': name,
       "sprites": {
         "other": {
           "official-artwork": {"front_default": imageUrl},
@@ -56,14 +69,14 @@ class PokemonModel extends Pokemon {
       'abilities': abilities
           .map(
             (ability) => {
-              "ability": {"name": ability.nombre},
+              "ability": {"name": ability.name},
             },
           )
           .toList(),
       'stats': stats
           .map(
             (stat) => {
-              "stat": {"name": stat.nombre},
+              "stat": {"name": stat.name},
               "base_stat": stat.valor,
             },
           )
@@ -74,7 +87,7 @@ class PokemonModel extends Pokemon {
   Pokemon toEntity() {
     return Pokemon(
       id: id,
-      nombre: nombre,
+      name: name,
       imageUrl: imageUrl,
       types: types,
       abilities: abilities,

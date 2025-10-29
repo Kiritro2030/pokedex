@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class Ability extends Equatable {
-  final String nombre;
+  final String name;
 
-  const Ability({required this.nombre});
+  const Ability({required this.name});
 
   @override
-  List<Object> get props => [nombre];
+  List<Object> get props => [name];
 }

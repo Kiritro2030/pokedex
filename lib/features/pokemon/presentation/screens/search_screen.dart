@@ -229,7 +229,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    pokemon.nombre.toUpperCase(),
+                                    pokemon.name.toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
