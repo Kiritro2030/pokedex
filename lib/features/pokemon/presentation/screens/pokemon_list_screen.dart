@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
+import 'package:pokedex/features/pokemon/domain/usecases/get_pokemon.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/pokemon_providers.dart';
 import 'package:pokedex/features/pokemon/presentation/screens/pokemon_detail_screen.dart';
+import 'package:pokedex/features/pokemon/presentation/widgets/pokemon_card.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -21,7 +23,10 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     super.initState();
     // Cargar Pokémon al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PokemonProviders>().loadPokemons();
+      final provider = context.read<PokemonProviders>();
+      if (provider.currentPage == 0) {
+        provider.loadPokemons();
+      }
     });
 
     _scrollController.addListener(_onScroll);
@@ -111,16 +116,19 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             //   crossAxisSpacing: 10,
             // ),
             // itemExtent: kTileHeight,
-            cacheExtent: 600,
+            key: const PageStorageKey<String>('pokemon_list_view'),
+            cacheExtent: 200,
             controller: _scrollController,
             itemCount: pokemons.length + 1,
+            addAutomaticKeepAlives: true, // Añade esto
+            addRepaintBoundaries: true, // Añade esto
             itemBuilder: (context, index) {
               if (index == pokemons.length) {
                 debugPrint("index == length");
                 return _buildLoadingIndicator(provider);
               }
               final pokemon = pokemons[index];
-              return _buildPokemonCard(context, pokemon);
+              return _buildPokemonCard(context, pokemon, index);
             },
           ),
         );
@@ -159,54 +167,10 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     return SizedBox.shrink();
   }
 
-  Widget _buildPokemonCard(BuildContext context, Pokemon pokemon) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PokemonDetailScreen(pokemon: pokemon),
-        ),
-      ),
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        clipBehavior: Clip.hardEdge,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListTile(
-            leading: Hero(
-              tag: 'pokemon-image-${pokemon.id}',
-              child: CachedNetworkImage(
-                imageUrl: pokemon.imageUrl,
-                memCacheHeight: 200,
-                memCacheWidth: 200,
-                width: 56,
-                height: 56,
-                errorWidget: (context, error, stackTrace) {
-                  return const Icon(Icons.catching_pokemon, size: 56);
-                },
-              ),
-            ),
-            title: Text(
-              pokemon.name.toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            // subtitle: Text(
-            //   'Tipos: ${pokemon.types.join(', ')}',
-            //   style: const TextStyle(fontSize: 12),
-            // ),
-            trailing: Text(
-              '#${pokemon.id}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-            ),
-          ),
-        ),
-      ),
+  Widget _buildPokemonCard(BuildContext context, Pokemon pokemon, int index) {
+    return PokemonCard(
+      key: ValueKey('pokemon-${pokemon.id}'),
+      pokemon: pokemon,
     );
   }
 }
