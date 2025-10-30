@@ -3,6 +3,7 @@ import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/pokemon_providers.dart';
 import 'package:pokedex/features/pokemon/presentation/screens/pokemon_detail_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PokemonListScreen extends StatefulWidget {
   const PokemonListScreen({super.key});
@@ -13,6 +14,7 @@ class PokemonListScreen extends StatefulWidget {
 
 class _PokemonListScreenState extends State<PokemonListScreen> {
   final ScrollController _scrollController = ScrollController();
+  static const double kTileHeight = 80;
 
   @override
   void initState() {
@@ -108,6 +110,8 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
             //   mainAxisSpacing: 10,
             //   crossAxisSpacing: 10,
             // ),
+            // itemExtent: kTileHeight,
+            cacheExtent: 600,
             controller: _scrollController,
             itemCount: pokemons.length + 1,
             itemBuilder: (context, index) {
@@ -166,34 +170,39 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         clipBehavior: Clip.hardEdge,
-        child: ListTile(
-          leading: Hero(
-            tag: 'pokemon-image-${pokemon.id}',
-            child: Image.network(
-              pokemon.imageUrl,
-              width: 56,
-              height: 56,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.catching_pokemon, size: 56);
-              },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            leading: Hero(
+              tag: 'pokemon-image-${pokemon.id}',
+              child: CachedNetworkImage(
+                imageUrl: pokemon.imageUrl,
+                memCacheHeight: 200,
+                memCacheWidth: 200,
+                width: 56,
+                height: 56,
+                errorWidget: (context, error, stackTrace) {
+                  return const Icon(Icons.catching_pokemon, size: 56);
+                },
+              ),
             ),
-          ),
-          title: Text(
-            pokemon.name.toUpperCase(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            'Tipos: ${pokemon.types.join(', ')}',
-            style: const TextStyle(fontSize: 12),
-          ),
-          trailing: Text(
-            '#${pokemon.id}',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
+            title: Text(
+              pokemon.name.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            // subtitle: Text(
+            //   'Tipos: ${pokemon.types.join(', ')}',
+            //   style: const TextStyle(fontSize: 12),
+            // ),
+            trailing: Text(
+              '#${pokemon.id}',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
           ),
         ),
