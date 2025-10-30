@@ -21,7 +21,7 @@ class PokemonProviders extends ChangeNotifier {
   int _currentPage = 0;
   bool _hasMore = true;
   bool _isFetchingMore = false;
-  static const int _pageSize = 24;
+  static const int _pageSize = 20; // Reducido de 24 a 20
 
   // Getters
   PokemonStatus get status => _status;

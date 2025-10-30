@@ -23,67 +23,69 @@ class _PokemonCardState extends State<PokemonCard>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return GestureDetector(
-      onTap: () async {
-        final provider = context.read<PokemonProviders>();
-
-        await provider.searchPokemon('${widget.pokemon.id}');
-
-        if (!context.mounted) return;
-
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                PokemonDetailScreen(pokemon: provider.pokemon!),
-          ),
-        );
-      },
+    return RepaintBoundary(
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         clipBehavior: Clip.hardEdge,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListTile(
-            leading: Hero(
-              tag: 'pokemon-image-${widget.pokemon.id}',
-              child: CachedNetworkImage(
-                imageUrl: widget.pokemon.imageUrl,
-                placeholder: (context, url) => const SizedBox(
-                  // Añade placeholder
-                  width: 56,
-                  height: 56,
-                  child: Center(child: Icon(Icons.catching_pokemon, size: 56)),
+        child: InkWell(
+          onTap: () async {
+            final provider = context.read<PokemonProviders>();
+            await provider.searchPokemon('${widget.pokemon.id}');
+            if (!context.mounted) return;
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    PokemonDetailScreen(pokemon: provider.pokemon!),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Hero(
+                  tag: 'pokemon-image-${widget.pokemon.id}',
+                  child: CachedNetworkImage(
+                    imageUrl: widget.pokemon.imageUrl,
+                    placeholder: (context, url) => const SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    memCacheHeight: 150,
+                    memCacheWidth: 150,
+                    maxHeightDiskCache: 150,
+                    maxWidthDiskCache: 150,
+                    width: 56,
+                    height: 56,
+                    fadeInDuration: Duration.zero,
+                    fadeOutDuration: Duration.zero,
+                    errorWidget: (context, error, stackTrace) {
+                      return const Icon(Icons.catching_pokemon, size: 56);
+                    },
+                  ),
                 ),
-                memCacheHeight: 200,
-                memCacheWidth: 200,
-                maxHeightDiskCache: 200,
-                maxWidthDiskCache: 200,
-                width: 56,
-                height: 56,
-                fadeInDuration: const Duration(milliseconds: 200),
-                errorWidget: (context, error, stackTrace) {
-                  return const Icon(Icons.catching_pokemon, size: 56);
-                },
-              ),
-            ),
-            title: Text(
-              widget.pokemon.name.toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            // subtitle: Text(
-            //   'Tipos: ${pokemon.types.join(', ')}',
-            //   style: const TextStyle(fontSize: 12),
-            // ),
-            trailing: Text(
-              '#${widget.pokemon.id}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    widget.pokemon.name.toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Text(
+                  '#${widget.pokemon.id}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

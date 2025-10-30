@@ -14,9 +14,12 @@ class PokemonListScreen extends StatefulWidget {
   State<PokemonListScreen> createState() => _PokemonListScreenState();
 }
 
-class _PokemonListScreenState extends State<PokemonListScreen> {
+class _PokemonListScreenState extends State<PokemonListScreen>
+    with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
-  static const double kTileHeight = 80;
+
+  @override
+  bool get wantKeepAlive => true; // Mantiene el estado cuando sales/entras
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Importante para AutomaticKeepAliveClientMixin
     return Consumer<PokemonProviders>(
       builder: (context, provider, child) {
         if (provider.isLoading && provider.pokemons.isEmpty) {
@@ -85,46 +89,22 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
         final pokemons = provider.pokemons;
 
         if (pokemons.isEmpty) {
-          return Center(child: Text('No hay pokemons disponibles'));
+          return const Center(child: Text('No hay pokemons disponibles'));
         }
 
-        // return RefreshIndicator(
-        //   onRefresh: provider.refresh,
-        //   child: Column(
-        //     children: [
-        //       GridView.builder(
-        //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //           crossAxisCount: 2,
-        //           mainAxisSpacing: 10,
-        //           crossAxisSpacing: 10,
-        //         ),
-        //         itemCount: pokemons.length,
-        //         itemBuilder: (context, index) {
-        //           return PokemonCard(pokemon: pokemons[index]);
-        //         },
-        //       ),
-        //     ],
-        //   ),
-        // );
-        debugPrint(provider.hasMore ? 'si tiene mas' : 'no tiene mas');
         return RefreshIndicator(
           onRefresh: provider.refresh,
           child: ListView.builder(
-            // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            //   crossAxisCount: 1,
-            //   mainAxisSpacing: 10,
-            //   crossAxisSpacing: 10,
-            // ),
-            // itemExtent: kTileHeight,
             key: const PageStorageKey<String>('pokemon_list_view'),
-            cacheExtent: 200,
+            cacheExtent: 300, // Reducido para menos precarga
             controller: _scrollController,
             itemCount: pokemons.length + 1,
-            addAutomaticKeepAlives: true, // Añade esto
-            addRepaintBoundaries: true, // Añade esto
+            addAutomaticKeepAlives: true,
+            addRepaintBoundaries: true,
+            itemExtent: 96, // Altura fija = mejor rendimiento
+            physics: const ClampingScrollPhysics(),
             itemBuilder: (context, index) {
               if (index == pokemons.length) {
-                debugPrint("index == length");
                 return _buildLoadingIndicator(provider);
               }
               final pokemon = pokemons[index];
@@ -138,7 +118,6 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
 
   Widget _buildLoadingIndicator(PokemonProviders provider) {
     if (provider.isFetchingMore) {
-      debugPrint("isfetchingMore");
       return const Padding(
         padding: EdgeInsets.all(16),
         child: Center(child: CircularProgressIndicator()),
@@ -146,25 +125,17 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
     }
 
     if (!provider.hasMore) {
-      debugPrint("!provider.hasMore");
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(
           child: Text(
             '🏁 No hay más Pokémon',
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ),
       );
     }
-    debugPrint("nadaaa");
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   Widget _buildPokemonCard(BuildContext context, Pokemon pokemon, int index) {
