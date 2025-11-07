@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pokedex/core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class FavoritesLocalDataSource {
@@ -17,12 +18,16 @@ class FavoritesLocalDataSourceImpl implements FavoritesLocalDataSource {
 
   @override
   Future<Set<int>> getFavorites() async {
-    final jsonString = pref.getString(_key);
+    try {
+      final jsonString = pref.getString(_key);
 
-    if (jsonString == null) return {};
+      if (jsonString == null) return {};
 
-    final List<dynamic> decoded = jsonDecode(jsonString);
-    return decoded.map((id) => id as int).toSet();
+      final List<dynamic> decoded = jsonDecode(jsonString);
+      return decoded.map((id) => id as int).toSet();
+    } catch (e) {
+      throw CacheExeption(e.toString());
+    }
   }
 
   @override

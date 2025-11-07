@@ -9,3 +9,9 @@ class ConnectionException implements Exception {
 
   ConnectionException(this.message);
 }
+
+class CacheExeption implements Exception {
+  final String message;
+
+  CacheExeption(this.message);
+}
