@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/core/extensions/string_extensions.dart';
+import 'package:pokedex/features/pokemon/presentation/widgets/favorite_button.dart';
 
 class PokemonDetailScreen extends StatelessWidget {
   final Pokemon pokemon;
@@ -28,29 +29,48 @@ class PokemonDetailScreen extends StatelessWidget {
             child: Column(
               children: [
                 //Pokemon Image
-                Container(
-                  width: 150,
-                  height: 125,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    // border: Border.all(
-                    //   color: Theme.of(context).colorScheme.outline,
-                    // ),
-                    // borderRadius: BorderRadius.all(Radius.elliptical(10, 10)),
-                  ),
-                  child: Hero(
-                    tag: 'pokemon-image-${pokemon.id}',
-                    child: ClipRRect(
-                      child: Image.network(
-                        pokemon.imageUrl,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.catching_pokemon, size: 100);
-                        },
+                SizedBox(
+                  width: double.infinity,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 125,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          // color: Colors.amber,
+                          // border: Border.all(
+                          //   color: Theme.of(context).colorScheme.outline,
+                          // ),
+                          // borderRadius: BorderRadius.all(Radius.elliptical(10, 10)),
+                        ),
+                        child: Hero(
+                          tag: 'pokemon-image-${pokemon.id}',
+                          child: ClipRRect(
+                            child: Image.network(
+                              pokemon.imageUrl,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.catching_pokemon,
+                                  size: 100,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Column(
+                          children: [FavoriteButton(pokemonId: pokemon.id)],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 5),

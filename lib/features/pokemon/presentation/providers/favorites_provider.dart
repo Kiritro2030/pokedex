@@ -53,6 +53,7 @@ class FavoritesProvider extends ChangeNotifier {
   bool get wasAdded => _wasAdded;
 
   Future<void> toggle(int id) async {
+    _toggleStatus = FavoriteStatus.loading;
     _wasAdded = !_favorites.contains(id);
 
     if (_wasAdded) {
