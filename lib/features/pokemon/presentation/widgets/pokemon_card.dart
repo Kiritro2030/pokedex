@@ -35,8 +35,11 @@ class _PokemonCardState extends State<PokemonCard>
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    PokemonDetailScreen(pokemon: provider.pokemon!),
+                builder: (context) {
+                  final pokemon = provider.pokemon!;
+                  provider.resetSearch();
+                  return PokemonDetailScreen(pokemon: pokemon);
+                },
               ),
             );
           },

@@ -131,7 +131,6 @@ class PokemonProviders extends ChangeNotifier {
   bool get isSearchLoading => _searchStatus == PokemonStatus.loading;
 
   Future<void> searchPokemon(String id) async {
-    print("providerSearchPokemon");
     _searchStatus = PokemonStatus.loading;
 
     notifyListeners();
@@ -155,9 +154,10 @@ class PokemonProviders extends ChangeNotifier {
   }
 
   void resetSearch() {
+    print("en reset");
     _searchStatus = PokemonStatus.initial;
     _pokemon = null;
     _searchErrorMessage = '';
-    notifyListeners();
+    // notifyListeners();
   }
 }

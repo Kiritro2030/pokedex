@@ -15,24 +15,27 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  final Set<Pokemon> _favoritePokemons = {};
+  final List<Pokemon> _favoritePokemons = [];
   bool _isloading = true;
 
   Future<void> _loadFavorites() async {
     setState(() {
       _isloading = true;
+      _favoritePokemons.clear();
     });
 
-    _favoritePokemons.clear();
     final favoritesProvider = context.read<FavoritesProvider>();
     final pokemonProviders = context.read<PokemonProviders>();
 
+    await favoritesProvider.loadFavorites();
+
     for (int pokemonId in favoritesProvider.favorites) {
       await pokemonProviders.searchPokemon(pokemonId.toString());
-      setState(() {
+      if (pokemonProviders.pokemon != null) {
         _favoritePokemons.add(pokemonProviders.pokemon!);
-      });
+      }
     }
+    pokemonProviders.resetSearch();
 
     setState(() {
       _isloading = false;
@@ -42,7 +45,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadFavorites();
     });
@@ -52,9 +54,11 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _loadFavorites,
-      child: Builder(
-        builder: (context) {
-          if (_isloading) {
+      child: ListView.builder(
+        itemCount: _favoritePokemons.length,
+        itemBuilder: (context, index) {
+          final reversedIndex = _favoritePokemons.length - index - 1;
+          if (_isloading && _favoritePokemons.isEmpty) {
             return Center(child: CircularProgressIndicator());
           }
 
@@ -62,11 +66,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             return Center(child: Text("No tienes favoritos"));
           }
 
-          return ListView(
-            children: _favoritePokemons
-                .map((pokemon) => _buildPokemonCard(pokemon))
-                .toList(),
-          );
+          return _buildPokemonCard(_favoritePokemons[reversedIndex]);
         },
       ),
     );

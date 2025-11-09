@@ -19,9 +19,7 @@ class FavoritesProvider extends ChangeNotifier {
   FavoriteStatus get status => _status;
   String get favoriteMessage => _favoriteErrorMessage;
 
-  FavoritesProvider(this.toggleFavorite, this.getFavorites) {
-    loadFavorites();
-  }
+  FavoritesProvider(this.toggleFavorite, this.getFavorites);
 
   Future<void> loadFavorites() async {
     _status = FavoriteStatus.loading;
@@ -61,7 +59,6 @@ class FavoritesProvider extends ChangeNotifier {
     } else {
       _favorites.remove(id);
     }
-
     notifyListeners();
 
     final result = await toggleFavorite.call(ToggleFavoriteParams(id));

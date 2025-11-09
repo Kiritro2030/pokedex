@@ -87,6 +87,7 @@ class _PokemonListScreenState extends State<PokemonListScreen>
         }
 
         final pokemons = provider.pokemons;
+        provider.resetSearch();
 
         if (pokemons.isEmpty) {
           return const Center(child: Text('No hay pokemons disponibles'));

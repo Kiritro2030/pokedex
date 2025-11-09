@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:pokedex/core/error/exceptions.dart';
 import 'package:pokedex/core/error/failures.dart';
 import 'package:pokedex/features/pokemon/data/datasources/favorites_local_data_source.dart';
@@ -15,7 +16,6 @@ class FavoritesRepositoryImpl extends FavoritesRepository {
       final favorites = await dataSource.getFavorites();
 
       favorites.add(pokemonId);
-
       return Right(dataSource.saveFavoritesIds(favorites));
     } on ServerException catch (e) {
       return Left(CacheFailure("Error al obtener: ${e.message}"));
@@ -39,7 +39,7 @@ class FavoritesRepositoryImpl extends FavoritesRepository {
   Future<Either<Failure, void>> removeFavorite(int pokemonId) async {
     try {
       final favorites = await dataSource.getFavorites();
-
+      favorites.remove(pokemonId);
       return Right(await dataSource.saveFavoritesIds(favorites));
     } on ServerException catch (e) {
       return Left(CacheFailure("Error en el servidor: ${e.message}"));
