@@ -54,21 +54,82 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _loadFavorites,
-      child: ListView.builder(
-        itemCount: _favoritePokemons.length,
-        itemBuilder: (context, index) {
-          final reversedIndex = _favoritePokemons.length - index - 1;
-          if (_isloading && _favoritePokemons.isEmpty) {
-            return Center(child: CircularProgressIndicator());
-          }
+      child: (_isloading && _favoritePokemons.isEmpty)
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              cacheExtent: 300, // Reducido para menos precarga
+              addRepaintBoundaries: true,
+              itemExtent: 96,
+              itemCount: _favoritePokemons.length,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 120,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ClipRect(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.network(
+                                  'https://e0.pxfuel.com/wallpapers/250/288/desktop-wallpaper-pikachu-forest-pokemon-pokemon-landscape.jpg',
+                                  fit: BoxFit.cover,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.black.withValues(alpha: 0.3),
+                                        Colors.black.withValues(alpha: 0.5),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
-          if (_favoritePokemons.isEmpty) {
-            return Center(child: Text("No tienes favoritos"));
-          }
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.catching_pokemon_outlined),
+                              Text(
+                                'Total de pokemon favoritos #${_favoritePokemons.length}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 3,
+                                      color: Colors.black54,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                final reversedIndex = _favoritePokemons.length - index;
 
-          return _buildPokemonCard(_favoritePokemons[reversedIndex]);
-        },
-      ),
+                if (_favoritePokemons.isEmpty) {
+                  return const Center(child: Text("No tienes favoritos"));
+                }
+
+                return _buildPokemonCard(_favoritePokemons[reversedIndex]);
+              },
+            ),
     );
   }
 
