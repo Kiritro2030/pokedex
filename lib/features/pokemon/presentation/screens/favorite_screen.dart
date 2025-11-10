@@ -29,13 +29,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     await favoritesProvider.loadFavorites();
 
-    for (int pokemonId in favoritesProvider.favorites) {
+    // ✅ Carga todos los pokémons en paralelo
+    final pokemonFutures = favoritesProvider.favorites.map((pokemonId) async {
       await pokemonProviders.searchPokemon(pokemonId.toString());
-      if (pokemonProviders.pokemon != null) {
-        _favoritePokemons.add(pokemonProviders.pokemon!);
-      }
-    }
-    pokemonProviders.resetSearch();
+      return pokemonProviders.pokemon;
+    }).toList();
+
+    final loadedPokemons = await Future.wait(pokemonFutures);
+
+    // Filtra los null y agrega a la lista
+    _favoritePokemons.addAll(loadedPokemons.whereType<Pokemon>());
 
     setState(() {
       _isloading = false;
@@ -56,78 +59,123 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       onRefresh: _loadFavorites,
       child: (_isloading && _favoritePokemons.isEmpty)
           ? const Center(child: CircularProgressIndicator())
+          : _favoritePokemons.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.favorite_border,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No tienes favoritos',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            )
           : ListView.builder(
-              cacheExtent: 300, // Reducido para menos precarga
+              cacheExtent: 300,
               addRepaintBoundaries: true,
               itemExtent: 96,
-              itemCount: _favoritePokemons.length,
+              itemCount: _favoritePokemons.length + 1, // ✅ +1 para el overlay
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 120,
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRect(
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Image.network(
-                                  'https://e0.pxfuel.com/wallpapers/250/288/desktop-wallpaper-pikachu-forest-pokemon-pokemon-landscape.jpg',
-                                  fit: BoxFit.cover,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.black.withValues(alpha: 0.3),
-                                        Colors.black.withValues(alpha: 0.5),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        Center(
-                          child: Row(
+                  return _buildOverlay(
+                    image: 'assets/images/favorite_screen.jpg',
+                    content: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.catching_pokemon_outlined),
+                              const Icon(
+                                Icons.favorite,
+                                color: Colors.redAccent,
+                                size: 28,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1, 1),
+                                    blurRadius: 3,
+                                    color: Colors.black54,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 12),
                               Text(
-                                'Total de pokemon favoritos #${_favoritePokemons.length}',
+                                'Mis Favoritos',
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
+                                  letterSpacing: 0.5,
                                   shadows: [
                                     Shadow(
-                                      offset: Offset(1, 1),
-                                      blurRadius: 3,
-                                      color: Colors.black54,
+                                      offset: Offset(2, 2),
+                                      blurRadius: 4,
+                                      color: Colors.black87,
                                     ),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.catching_pokemon,
+                                  color: Colors.yellowAccent,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${_favoritePokemons.length} Pokémon capturados',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        offset: Offset(1, 1),
+                                        blurRadius: 2,
+                                        color: Colors.black54,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   );
                 }
-                final reversedIndex = _favoritePokemons.length - index;
 
-                if (_favoritePokemons.isEmpty) {
-                  return const Center(child: Text("No tienes favoritos"));
-                }
-
-                return _buildPokemonCard(_favoritePokemons[reversedIndex]);
+                // ✅ Invierte el índice para mostrar los últimos primero
+                // index 1 → muestra el último pokémon (_favoritePokemons.length - 1)
+                // index 2 → muestra el penúltimo (_favoritePokemons.length - 2)
+                final pokemonIndex = _favoritePokemons.length - index;
+                return _buildPokemonCard(_favoritePokemons[pokemonIndex]);
               },
             ),
     );
@@ -137,6 +185,45 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return PokemonCard(
       key: ValueKey('pokemon-${pokemon.id}'),
       pokemon: pokemon,
+    );
+  }
+
+  Widget _buildOverlay({required String image, required List<Widget> content}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 120,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRect(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(image, fit: BoxFit.cover),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.5),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: content,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

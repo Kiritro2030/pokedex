@@ -99,16 +99,104 @@ class _PokemonListScreenState extends State<PokemonListScreen>
             key: const PageStorageKey<String>('pokemon_list_view'),
             cacheExtent: 300, // Reducido para menos precarga
             controller: _scrollController,
-            itemCount: pokemons.length + 1,
+            itemCount: pokemons.length + 2,
             addAutomaticKeepAlives: true,
             addRepaintBoundaries: true,
             itemExtent: 96, // Altura fija = mejor rendimiento
             physics: const ClampingScrollPhysics(),
             itemBuilder: (context, index) {
-              if (index == pokemons.length) {
+              if (index == 0) {
+                return _buildOverlay(
+                  image: 'assets/images/list_screen.jpg',
+                  content: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.explore,
+                              color: Colors.lightBlueAccent,
+                              size: 28,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 3,
+                                  color: Colors.black54,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Explorar Pokédex',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(2, 2),
+                                    blurRadius: 4,
+                                    color: Colors.black87,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.catching_pokemon,
+                                color: Colors.yellowAccent,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${pokemons.length} Pokémon descubiertos',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(1, 1),
+                                      blurRadius: 2,
+                                      color: Colors.black54,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
+              if (index == pokemons.length + 1) {
                 return _buildLoadingIndicator(provider);
               }
-              final pokemon = pokemons[index];
+              final pokemon =
+                  pokemons[index - 1]; // Ajusta el índice por el overlay
               return _buildPokemonCard(context, pokemon, index);
             },
           ),
@@ -143,6 +231,45 @@ class _PokemonListScreenState extends State<PokemonListScreen>
     return PokemonCard(
       key: ValueKey('pokemon-${pokemon.id}'),
       pokemon: pokemon,
+    );
+  }
+
+  Widget _buildOverlay({required String image, required List<Widget> content}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 120,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRect(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(image, fit: BoxFit.cover),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.5),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: content,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
