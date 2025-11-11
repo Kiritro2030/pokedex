@@ -5,4 +5,4 @@ Copy-Item assets\branding.png android\app\src\main\res\drawable-hdpi\branding.pn
 Copy-Item assets\branding.png android\app\src\main\res\drawable-xhdpi\branding.png -Force
 Copy-Item assets\branding.png android\app\src\main\res\drawable-xxhdpi\branding.png -Force
 Copy-Item assets\branding.png android\app\src\main\res\drawable-xxxhdpi\branding.png -Force
-Write-Host "✓ Branding corregido!" -ForegroundColor Green
+Write-Host "corregido" -ForegroundColor Green
