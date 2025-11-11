@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/pokemon_providers.dart';
 import 'package:pokedex/features/pokemon/presentation/screens/favorite_screen.dart';
 import 'package:pokedex/features/pokemon/presentation/screens/pokemon_detail_screen.dart';
@@ -27,32 +26,56 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Pokedex", style: TextStyle(fontSize: 15)),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        toolbarHeight: 40,
-      ),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.catching_pokemon, color: Colors.deepOrange),
-            label: "Pokemon",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search, color: Colors.blue),
-            label: "Buscar",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite, color: Colors.red),
-            label: "Favoritos",
-          ),
-        ],
+      // appBar: AppBar(
+      //   title: Text("Pokedex", style: TextStyle(fontSize: 15)),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   foregroundColor: Colors.white,
+      //   toolbarHeight: 40,
+      // ),
+      body: SafeArea(child: _screens[_selectedIndex]),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).primaryColor,
+          unselectedItemColor: Colors.grey.shade400,
+          selectedFontSize: 12,
+          unselectedFontSize: 11,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.catching_pokemon_outlined),
+              activeIcon: Icon(Icons.catching_pokemon),
+              label: "Pokémon",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search_outlined),
+              activeIcon: Icon(Icons.search),
+              label: "Buscar",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border),
+              activeIcon: Icon(Icons.favorite),
+              label: "Favoritos",
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -122,7 +145,7 @@ class _DashboardState extends State<Dashboard> {
                   icon: Icons.catching_pokemon,
                   title: "Explorar todos los Pokémon",
                   subtitle: "Ver lista completa",
-                  color: Colors.red,
+                  color: Colors.deepOrange,
                   onTap: () => _onItemTapped(1),
                 ),
                 SizedBox(height: 12),
@@ -197,14 +220,7 @@ class _DashboardState extends State<Dashboard> {
           padding: EdgeInsets.all(16),
           child: Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 28),
-              ),
+              Icon(icon, color: color, size: 28),
               SizedBox(width: 16),
               Expanded(
                 child: Column(

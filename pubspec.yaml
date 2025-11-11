@@ -44,6 +44,8 @@ dependencies:
   equatable: ^2.0.7
   cached_network_image: ^3.4.1
   shared_preferences: ^2.5.3
+  flutter_native_splash: ^2.4.7
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +58,28 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+
+flutter_native_splash:
+  color: "#f4f4f4"
+  image: assets/appIcon.png
+  branding: assets/branding.png
+  android_gravity: center
+  ios_content_mode: scaleAspectFit
+  branding_mode: bottom
+  android: true
+  ios: true
+  web: false
+  # Esto evita que se escale demasiado pequeño
+  android_12:
+    image: assets/appIcon.png
+    branding: assets/branding.png
+    color: "#f4f4f4" 
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/appIcon.png" 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

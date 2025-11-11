@@ -37,6 +37,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     final loadedPokemons = await Future.wait(pokemonFutures);
 
+    pokemonProviders.resetSearch();
     // Filtra los null y agrega a la lista
     _favoritePokemons.addAll(loadedPokemons.whereType<Pokemon>());
 
