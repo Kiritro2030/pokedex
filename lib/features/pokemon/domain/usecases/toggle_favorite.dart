@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:pokedex/core/error/failures.dart';
 import 'package:pokedex/core/usecases/usecase.dart';
 import 'package:pokedex/features/pokemon/domain/repositories/favorites_repository.dart';

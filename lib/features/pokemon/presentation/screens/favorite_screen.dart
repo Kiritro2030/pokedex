@@ -1,5 +1,3 @@
-import 'package:dartz/dartz_streaming.dart' hide Text;
-import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/favorites_provider.dart';

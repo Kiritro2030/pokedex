@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/pokemon/domain/entities/pokemon.dart';
-import 'package:pokedex/features/pokemon/domain/usecases/get_pokemon.dart';
 import 'package:pokedex/features/pokemon/presentation/providers/pokemon_providers.dart';
-import 'package:pokedex/features/pokemon/presentation/screens/pokemon_detail_screen.dart';
 import 'package:pokedex/features/pokemon/presentation/widgets/pokemon_card.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class PokemonListScreen extends StatefulWidget {
   const PokemonListScreen({super.key});
@@ -252,8 +249,8 @@ class _PokemonListScreenState extends State<PokemonListScreen>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.3),
-                          Colors.black.withOpacity(0.5),
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.5),
                         ],
                       ),
                     ),

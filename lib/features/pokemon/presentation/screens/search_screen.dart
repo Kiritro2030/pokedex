@@ -15,13 +15,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    print("dispose");
     _searchController.dispose();
     super.dispose();
   }
 
   Future<void> _onSearch() async {
-    print("on search");
     final value = _searchController.text.trim();
 
     if (value.isEmpty) {
@@ -81,7 +79,6 @@ class _SearchScreenState extends State<SearchScreen> {
           Expanded(
             child: Consumer<PokemonProviders>(
               builder: (context, provider, child) {
-                print("consumer");
                 if (provider.searchStatus == PokemonStatus.initial) {
                   return Center(
                     child: Column(
@@ -216,7 +213,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                             height: size,
                                             errorBuilder:
                                                 (context, error, stackTrace) {
-                                                  print(pokemon.imageUrl);
                                                   return Icon(
                                                     Icons.catching_pokemon,
                                                     size: size * 0.5,

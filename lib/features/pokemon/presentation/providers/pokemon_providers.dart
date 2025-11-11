@@ -154,7 +154,6 @@ class PokemonProviders extends ChangeNotifier {
   }
 
   void resetSearch() {
-    print("en reset");
     _searchStatus = PokemonStatus.initial;
     _pokemon = null;
     _searchErrorMessage = '';

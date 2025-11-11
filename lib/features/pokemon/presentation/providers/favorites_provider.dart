@@ -1,4 +1,3 @@
-import 'package:flutter/widget_previews.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:pokedex/core/usecases/usecase.dart';
